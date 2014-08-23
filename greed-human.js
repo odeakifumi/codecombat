@@ -37,43 +37,57 @@ for (var peonIndex = 0; peonIndex < peasants.length;peonIndex++) {
     }
     base.command(peon,'move', new Vector(target_x, target_y));
 }
-if (!base.joutai) base.joutai = 1;
+if (!base.joutai){
+    base.joutai = 1;
+    base.peasant = 0;
+} 
 var teki=base.getEnemies();
-if (base.joutai === 1) {
-for(var i=0;i<teki.length;i++){
-    if(teki[i].type!='peasant'&&teki[i].type!='base'){
-        base.joutai=2;
-    }    
+if (base.joutai===1){
+    if(base.gold>=100)base.joutai=2;
 }
-if(base.gold>=200)base.joutai=2;
+if (base.joutai === 1||base.joutai===3) {
+    for(var i=0;i<teki.length;i++){
+        if(teki[i].type!='peon'&&teki[i].type!='base'){
+            base.joutai=4;
+        }    
+    }
 }
 var type;
-if (base.built.length < 6) {
-    type = 'peasant';
-} else if (base.joutai === 2 && base.built.length < 11) {
-    type = 'soldier';
-} else
-if (base.joutai === 2 && base.built.length <12) {
-    type = 'griffin-rider';
-} else
-if (base.joutai === 2 && base.built.length < 6) {
-    type = 'librarian';
-} else if(base.joutai===2){
-    if(!base.jikoku){
-        base.jikoku=base.now()+3;
+base.say(base.joutai);
+if (base.joutai===1&&base.peasant<6&&base.gold>=50) {
+    type='peasant';
+    base.peasant+=1;
+}else if (base.joutai===2){
+    type='soldier';
+    base.joutai=3;
+}else if (base.joutai===4) {
+    if (base.gold>=100) {
+        base.joutai=5;
     }
-    if(base.jikoku<base.now()){
-        base.joutai=3;
+}else if (base.joutai===5) {
+    type='griffin-rider';
+    base.joutai=6;
+}else if (base.joutai===6) {
+    type='librarian';
+    base.joutai=7;
+    base.kazu=0;
+}else if (base.joutai===7) {
+    if (base.peasant<6) {
+        if (base.gold>=50) {
+            type='peasant';
+            base.peasant+=1;
+            base.joutai=4;    
+        }
+    }else if (base.kazu<5) {
+        if (base.gold>=10) {
+            type='soldier';
+            base.kazu+=1;
+        }
+    }else{
+        base.joutai=4;
     }
-}else if (base.joutai === 3 && base.built.length < 6) {
-    type = 'soldier';
-} else
-if (base.joutai === 3 && base.built.length < 220) {
-    type = 'librarian';
-} else
-if (base.joutai === 3) {
-    type = 'griffin-rider';
 }
+
 if (type && base.gold >= base.buildables[type].goldCost)
     base.build(type);
 
