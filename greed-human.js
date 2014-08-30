@@ -61,16 +61,24 @@ if (base.joutai===1&&base.peasant<6&&base.gold>=50) {
     type='soldier';
     base.joutai=3;
 }else if (base.joutai===4) {
-    if (base.gold>=100) {
+    if (base.gold>=180) {
         base.joutai=5;
+        base.kazu=0;
     }
 }else if (base.joutai===5) {
-    type='griffin-rider';
-    base.joutai=6;
+    type='knight';
+    base.kazu+=1;
+    if (base.kazu===2) {
+        base.joutai=6;
+        base.kazu=0;
+    }
 }else if (base.joutai===6) {
     type='librarian';
-    base.joutai=7;
-    base.kazu=0;
+    base.kazu+=1;
+    if (base.kazu===3) {
+        base.joutai=7;
+        base.kazu=0;
+    }
 }else if (base.joutai===7) {
     if (base.peasant<6) {
         if (base.gold>=50) {
