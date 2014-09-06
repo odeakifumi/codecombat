@@ -37,67 +37,31 @@ for (var peonIndex = 0; peonIndex < peasants.length;peonIndex++) {
     }
     base.command(peon,'move', new Vector(target_x, target_y));
 }
-if (!base.joutai){
-    base.joutai = 1;
-    base.peasant = 0;
-} 
+if (base.gold>=100&&!base.finished) {
+    base.build('soldier');
+    base.finished=true;
+    return;
+}
+var character_table={
+    'peon':'peasant',
+    'munchkin':'soldier',
+    'ogre':'knight',
+    'shaman':'librarian',
+    'fangrider':'griffin-rider',
+    'brawler':'captain',
+};
 var teki=base.getEnemies();
-if (base.joutai===1){
-    if(base.gold>=100)base.joutai=2;
-}
-if (base.joutai === 1||base.joutai===3) {
-    for(var i=0;i<teki.length;i++){
-        if(teki[i].type!='peon'&&teki[i].type!='base'){
-            base.joutai=4;
-        }    
-    }
-}
-var type;
-base.say(base.joutai);
-if (base.joutai===1&&base.peasant<6&&base.gold>=50) {
-    type='peasant';
-    base.peasant+=1;
-}else if (base.joutai===2){
-    type='soldier';
-    base.joutai=3;
-}else if (base.joutai===4) {
-    if (base.gold>=180) {
-        base.joutai=5;
-        base.kazu=0;
-    }
-}else if (base.joutai===5) {
-    type='knight';
-    base.kazu+=1;
-    if (base.kazu===2) {
-        base.joutai=6;
-        base.kazu=0;
-    }
-}else if (base.joutai===6) {
-    type='librarian';
-    base.kazu+=1;
-    if (base.kazu===3) {
-        base.joutai=7;
-        base.kazu=0;
-    }
-}else if (base.joutai===7) {
-    if (base.peasant<6) {
-        if (base.gold>=50) {
-            type='peasant';
-            base.peasant+=1;
-            base.joutai=4;    
+
+for (var i = teki.length-1; i >=1 ; i--) {
+    if (!teki[i].check){
+        var type=character_table[teki[i].type];
+        if (base.gold>=base.buildables[type].goldCost) {
+            base.build(type);
+            teki[i].check=true;
         }
-    }else if (base.kazu<5) {
-        if (base.gold>=10) {
-            type='soldier';
-            base.kazu+=1;
-        }
-    }else{
-        base.joutai=4;
     }
 }
 
-if (type && base.gold >= base.buildables[type].goldCost)
-    base.build(type);
 
 // 'peasant': Peasants gather gold and do not fight.
 // 'soldier': Light melee unit.
@@ -106,3 +70,11 @@ if (type && base.gold >= base.buildables[type].goldCost)
 // 'griffin-rider': High-damage ranged attacker.
 // 'captain': Mythically expensive super melee unit.
 // See the buildables documentation below for costs and the guide for stats.
+
+// 'peon': Peons gather gold and do not fight.
+// 'munchkin': Light melee unit.
+// 'ogre': Heavy melee unit.
+// 'shaman': Support spellcaster.
+// 'fangrider': High damage ranged attacker.
+// 'brawler': Mythically expensive super melee unit.
+// See the buildables documentation below for costs and the guide for more info.

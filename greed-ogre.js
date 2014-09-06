@@ -61,7 +61,7 @@ if (base.joutai===1&&base.peon<6&&base.gold>=50) {
     type='munchkin';
     base.joutai=3;
 }else if (base.joutai===4) {
-    if (base.gold>=180) {
+    if (base.gold>=100) {
         base.joutai=5;
         base.kazu=0;
     }
